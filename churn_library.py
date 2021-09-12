@@ -1,4 +1,5 @@
 """
+Author: Ratnesh Kumar
 This is the churn_library.py module.
 Artifact produced will be in images, logs and models folders.
 Usage:
@@ -26,6 +27,7 @@ sns.set()
 for directory in ["logs", "images/eda", "images/results", "./models"]:
     if not os.path.exists(directory):
         os.makedirs(directory)
+
 
 def import_data(pth):
     """
@@ -221,7 +223,7 @@ def feature_importance_plot(model, x_data, output_pth):
 
 
 def train_models(x_train, x_test, y_train, y_test):
-    """0
+    """
     train, store model results: images + scores, and store models
     input:
               X_train: X training data
