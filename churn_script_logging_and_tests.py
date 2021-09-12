@@ -7,13 +7,11 @@ Usage:
 """
 
 import os
-import sys
-import glob
 import logging
-import churn_library as cl
-
 import pytest
 import joblib
+
+import churn_library as cl
 
 for directory in ["logs", "images/eda", "images/results", "./models"]:
     if not os.path.exists(directory):
@@ -47,11 +45,17 @@ def encoder_helper(raw_data):
     encoder fixture - returns the encoded dataframe on some specific column
     """
     try:
-        category_lst = ["Gender", "Education_Level", "Marital_Status", "Income_Category", "Card_Category"]
+        category_lst = [
+            "Gender",
+            "Education_Level",
+            "Marital_Status",
+            "Income_Category",
+            "Card_Category"]
         df_encoded = cl.encoder_helper(raw_data, category_lst)
         logging.info("Encoded dataframe fixture creation: SUCCESS")
     except KeyError as err:
-        logging.error("Encoded dataframe fixture creation: Not existent column to encode")
+        logging.error(
+            "Encoded dataframe fixture creation: Not existent column to encode")
         raise err
     return df_encoded
 
@@ -81,7 +85,8 @@ def test_import(raw_data):
         assert raw_data.shape[0] > 0
         assert raw_data.shape[1] > 0
     except AssertionError as err:
-        logging.error("Testing import_data: The file doesn't appear to have rows and columns")
+        logging.error(
+            "Testing import_data: The file doesn't appear to have rows and columns")
         raise err
 
 
@@ -100,14 +105,15 @@ def test_eda(raw_data):
             with open(f"images/eda/{image_name}.jpg", 'r'):
                 logging.info(f"{image_name} Testing perform_eda: SUCCESS")
         except FileNotFoundError as err:
-            logging.error(f"{image_name} Testing perform_eda: generated images missing")
+            logging.error(
+                f"{image_name} Testing perform_eda: generated images missing")
             raise err
 
 
 def test_encoder_helper(encoder_helper):
     """
-	test encoder helper
-	"""
+        test encoder helper
+        """
     try:
         assert encoder_helper.shape[0] > 0
         assert encoder_helper.shape[1] > 0
@@ -133,8 +139,8 @@ def test_encoder_helper(encoder_helper):
 
 def test_perform_feature_engineering(perform_feature_engineering):
     """
-	test perform_feature_engineering
-	"""
+        test perform_feature_engineering
+        """
     try:
         x_train, x_test = perform_feature_engineering[0], perform_feature_engineering[1]
         y_train, y_test = perform_feature_engineering[2], perform_feature_engineering[3]
@@ -149,8 +155,8 @@ def test_perform_feature_engineering(perform_feature_engineering):
 
 def test_train_models(perform_feature_engineering):
     """
-	test train_models
-	"""
+        test train_models
+        """
     x_train, x_test = perform_feature_engineering[0], perform_feature_engineering[1]
     y_train, y_test = perform_feature_engineering[2], perform_feature_engineering[3]
     cl.train_models(x_train, x_test, y_train, y_test)
@@ -174,10 +180,13 @@ def test_train_models(perform_feature_engineering):
         try:
             if "Train" in image_name or "Test" in image_name:
                 with open("images/results/%s.png" % image_name, 'r'):
-                    logging.info(f"{image_name} Testing testing_models (report generation): SUCCESS")
+                    logging.info(
+                        f"{image_name} Testing testing_models (report generation): SUCCESS")
             else:
                 with open("images/results/%s.jpg" % image_name, 'r'):
-                    logging.info(f"{image_name} Testing testing_models (report generation): SUCCESS")
+                    logging.info(
+                        f"{image_name} Testing testing_models (report generation): SUCCESS")
         except FileNotFoundError as err:
-            logging.error(f"{image_name} Testing testing_models (report generation): generated images missing")
+            logging.error(
+                f"{image_name} Testing testing_models (report generation): generated images missing")
             raise err
