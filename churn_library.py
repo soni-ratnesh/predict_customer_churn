@@ -7,7 +7,7 @@ Usage:
 3. Model training and saving
 4. saving Result
 """
-
+import os
 import joblib
 import pandas as pd
 import numpy as np
@@ -23,6 +23,9 @@ from sklearn.metrics import classification_report
 
 sns.set()
 
+for directory in ["logs", "images/eda", "images/results", "./models"]:
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 def import_data(pth):
     """
@@ -263,6 +266,7 @@ def train_models(x_train, x_test, y_train, y_test):
 
 
 if __name__ == "__main__":
+
     data_df = import_data("data/bank_data.csv")
     perform_eda(data_df)
     cat_columns = [

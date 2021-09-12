@@ -171,7 +171,6 @@ def test_train_models(perform_feature_engineering):
 
 if __name__ == "__main__":
     for directory in ["logs", "images/eda", "images/results", "./models"]:
-        files = glob.glob("%s/*" % directory)
-        for file in files:
-            os.remove(file)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
     sys.exit(pytest.main(["-s"]))
