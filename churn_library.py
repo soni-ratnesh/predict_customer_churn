@@ -70,7 +70,7 @@ def perform_eda(df):
     # plot heatmap
     plt.figure(figsize=(20, 10))
     sns.heatmap(df.corr(), annot=False, cmap="Dark2_r", linewidths=2)
-    plt.savefig("images/eda/heatmap.jpg")
+    plt.savefig("images/eda/Heatmap.jpg")
     plt.close()
 
 
