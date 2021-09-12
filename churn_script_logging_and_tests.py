@@ -7,6 +7,10 @@ import churn_library as cl
 import pytest
 import joblib
 
+for directory in ["logs", "images/eda", "images/results", "./models"]:
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
 logging.basicConfig(
     filename='./logs/churn_library.log',
     level=logging.INFO,
@@ -28,6 +32,7 @@ def raw_data():
         raise err
     return raw_dataframe
 
+
 @pytest.fixture(name='encoder_helper')
 def encoder_helper(raw_data):
     """
@@ -41,6 +46,7 @@ def encoder_helper(raw_data):
         logging.error("Encoded dataframe fixture creation: Not existent column to encode")
         raise err
     return df_encoded
+
 
 @pytest.fixture(name='perform_feature_engineering')
 def perform_feature_engineering(encoder_helper):
@@ -167,10 +173,3 @@ def test_train_models(perform_feature_engineering):
         except FileNotFoundError as err:
             logging.error(f"{image_name} Testing testing_models (report generation): generated images missing")
             raise err
-
-
-if __name__ == "__main__":
-    for directory in ["logs", "images/eda", "images/results", "./models"]:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    sys.exit(pytest.main(["-s"]))

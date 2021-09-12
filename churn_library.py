@@ -266,7 +266,9 @@ def train_models(x_train, x_test, y_train, y_test):
 
 
 if __name__ == "__main__":
-
+    for directory in ["logs", "images/eda", "images/results", "./models"]:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
     data_df = import_data("data/bank_data.csv")
     perform_eda(data_df)
     cat_columns = [
