@@ -1,7 +1,13 @@
-# library doc string
+"""
+This is the churn_library.py module.
+Artifact produced will be in images, logs and models folders.
+Usage:
+1. EDA
+2. Feature engineering
+3. Model training and saving
+4. saving Result
+"""
 
-
-# import libraries
 import joblib
 import pandas as pd
 import numpy as np
@@ -30,7 +36,8 @@ def import_data(pth):
     # read pandas dataframe from csv file path
     data = pd.read_csv(pth)
     #
-    data['Churn'] = data['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
+    data['Churn'] = data['Attrition_Flag'].apply(
+        lambda val: 0 if val == "Existing Customer" else 1)
 
     return data
 
@@ -65,8 +72,6 @@ def perform_eda(df):
     sns.heatmap(df.corr(), annot=False, cmap="Dark2_r", linewidths=2)
     plt.savefig("images/eda/heatmap.jpg")
     plt.close()
-
-    return None
 
 
 def encoder_helper(df, category_lst):
@@ -107,19 +112,32 @@ def perform_feature_engineering(df):
               y_test: y testing data
     """
     df_y = df["Churn"]
-    df_X = pd.DataFrame()
-    keep_cols = ['Customer_Age', 'Dependent_count', 'Months_on_book',
-                 'Total_Relationship_Count', 'Months_Inactive_12_mon',
-                 'Contacts_Count_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
-                 'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
-                 'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1', 'Avg_Utilization_Ratio',
-                 'Gender_Churn', 'Education_Level_Churn', 'Marital_Status_Churn',
-                 'Income_Category_Churn', 'Card_Category_Churn']
-    df_X[keep_cols] = df[keep_cols]
+    df_x = pd.DataFrame()
+    keep_cols = [
+        'Customer_Age',
+        'Dependent_count',
+        'Months_on_book',
+        'Total_Relationship_Count',
+        'Months_Inactive_12_mon',
+        'Contacts_Count_12_mon',
+        'Credit_Limit',
+        'Total_Revolving_Bal',
+        'Avg_Open_To_Buy',
+        'Total_Amt_Chng_Q4_Q1',
+        'Total_Trans_Amt',
+        'Total_Trans_Ct',
+        'Total_Ct_Chng_Q4_Q1',
+        'Avg_Utilization_Ratio',
+        'Gender_Churn',
+        'Education_Level_Churn',
+        'Marital_Status_Churn',
+        'Income_Category_Churn',
+        'Card_Category_Churn']
+    df_x[keep_cols] = df[keep_cols]
 
     # train test split
     x_train, x_test, y_train, y_test = train_test_split(
-        df_X, df_y, test_size=0.3, random_state=42)
+        df_x, df_y, test_size=0.3, random_state=42)
 
     return x_train, x_test, y_train, y_test
 
@@ -163,7 +181,7 @@ def classification_report_image(y_train,
             dfi.export(clf_report, f"images/results/{title}_{mode}.png")
 
 
-def feature_importance_plot(model, X_data, output_pth):
+def feature_importance_plot(model, x_data, output_pth):
     """
     creates and stores the feature importances in pth
     input:
@@ -180,7 +198,7 @@ def feature_importance_plot(model, X_data, output_pth):
     indices = np.argsort(importances)[::-1]
 
     # Rearrange feature names so they match the sorted feature importances
-    names = [X_data.columns[i] for i in indices]
+    names = [x_data.columns[i] for i in indices]
 
     # Create plot
     plt.figure(figsize=(20, 5))
@@ -190,16 +208,16 @@ def feature_importance_plot(model, X_data, output_pth):
     plt.ylabel('Importance')
 
     # Add bars
-    plt.bar(range(X_data.shape[1]), importances[indices])
+    plt.bar(range(x_data.shape[1]), importances[indices])
 
     # Add feature names as x-axis labels
-    plt.xticks(range(X_data.shape[1]), names, rotation=90)
+    plt.xticks(range(x_data.shape[1]), names, rotation=90)
 
     plt.savefig(f"images/{output_pth}/Feature_Importance.jpg")
     plt.close()
 
 
-def train_models(X_train, X_test, y_train, y_test):
+def train_models(x_train, x_test, y_train, y_test):
     """0
     train, store model results: images + scores, and store models
     input:
@@ -221,15 +239,15 @@ def train_models(X_train, X_test, y_train, y_test):
     }
 
     cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
-    cv_rfc.fit(X_train, y_train)
+    cv_rfc.fit(x_train, y_train)
 
-    lrc.fit(X_train, y_train)
+    lrc.fit(x_train, y_train)
 
-    y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
-    y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(x_train)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(x_test)
 
-    y_train_preds_lr = lrc.predict(X_train)
-    y_test_preds_lr = lrc.predict(X_test)
+    y_train_preds_lr = lrc.predict(x_train)
+    y_test_preds_lr = lrc.predict(x_test)
 
     classification_report_image(y_train,
                                 y_test,
@@ -238,7 +256,7 @@ def train_models(X_train, X_test, y_train, y_test):
                                 y_test_preds_lr,
                                 y_test_preds_rf)
 
-    feature_importance_plot(cv_rfc, X_train, "results")
+    feature_importance_plot(cv_rfc, x_train, "results")
 
     joblib.dump(cv_rfc.best_estimator_, "models/rfc_model.pkl")
     joblib.dump(lrc, "models/logistic_model.pkl")
