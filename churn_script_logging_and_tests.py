@@ -1,3 +1,11 @@
+"""
+Author: Ratnesh Kumar
+This is the testing and logging module for churn_library.py module.
+Artifact produced will be in images, logs and models folders.
+Usage:
+1. Test case for all functionality.
+"""
+
 import os
 import sys
 import glob
